@@ -1,101 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pendulum Wave</title>
-<style>
-    canvas {
-        display: block;
-        margin: auto;
-        border: 1px solid black;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulum Wave</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-<label for="numPendulums">Number of Pendulums:</label>
-<input type="number" id="numPendulums" min="1" value="10">
-<br>
-<canvas id="canvas"></canvas>
-<script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    <label for="numPendulums">Number of Pendulums:</label>
+    <input type="number" id="numPendulums" min="1" value="10">
+    <input type="number" id="baseLength" min="0" value="0.23" step="0.01" lang="en">
+    <br>
+    
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <canvas id="canvas"></canvas>
+        </div>
+        <div class="col">
+          <canvas id="canvas2"></canvas>
+        </div>
+      </div>
+    </div>
 
-    // Parameters
-    let numPendulums = parseInt(document.getElementById('numPendulums').value);
-    const colors = ['#FF5733', '#C70039', '#900C3F', '#581845', '#8E44AD', '#3498DB', '#2ECC71', '#F1C40F', '#E67E22', '#7F8C8D'];
-    const dampingFactor = 0.99; // Damping factor for friction
-    const animationInterval = 60; // Animation interval in milliseconds
-    const gravity = 9.8; // Acceleration due to gravity
-    const Tmax = 24;
+     
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Parameters
+        let numPendulums = parseInt(document.getElementById('numPendulums').value);
+        let l = document.getElementById('baseLength').value;
+        const colors = ['#FF5733', '#C70039', '#900C3F', '#581845', '#8E44AD', '#3498DB', '#2ECC71', '#F1C40F', '#E67E22', '#7F8C8D'];
+        const dampingFactor = 0.99; // Damping factor for friction
+        const animationInterval = 60; // Animation interval in milliseconds
+        const gravity = 9.8; // Acceleration due to gravity
+        const Tmax = 24;
+
+        let baseLength = parseInt((Tmax/(Math.sqrt(l/gravity)*6.28))-2) + 1;
+        console.log(baseLength)
 
 
-    // Initialize pendulums
-    const pendulums = [];
-    const baseLength = 23;
-    const timeOffsets = [];
-    for (let i = 0; i < numPendulums; i++) {
-        pendulums.push({
-            length: gravity * ((24/((2*Math.PI*(baseLength + i + 1)))*(24/(2*Math.PI*(baseLength + i + 1))))) * 1000,
-            angle: Math.PI / 2,
-            angularVelocity: 0,
-            color: colors[i % colors.length]
-        });
-        
-        timeOffsets.push(i * Math.PI / 60);
-    }
-
-    // Update pendulum positions
-    function updatePendulums() {
-        for (let i = 0; i < numPendulums; i++) {
-            const pendulum = pendulums[i];
-            
-            const angularAcceleration = (-gravity / pendulum.length) * Math.sin(pendulum.angle);
-            pendulum.angularVelocity += angularAcceleration;
-            pendulum.angularVelocity *= dampingFactor;
-            pendulum.angle += pendulum.angularVelocity;
-
-            const x = canvas.width / 2 + pendulum.length * Math.sin(pendulum.angle);
-            const y = 50 + pendulum.length * Math.cos(pendulum.angle);
-            
-            // Draw pendulum line
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 50);
-            ctx.lineTo(x, y);
-            ctx.strokeStyle = pendulum.color;
-            ctx.stroke();
-
-            // Draw pendulum circle
-            ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI * 2);
-            ctx.fillStyle = pendulum.color;
-            ctx.fill();
-        }
-    }
-
-    // Animation loop
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        updatePendulums();
-        setTimeout(animate, animationInterval); // Change to setTimeout for slower animation
-    }
-
-    // Set canvas size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Start animation
-    animate();
-
-    // Event listener for number of pendulums input
-    document.getElementById('numPendulums').addEventListener('change', function() {
-        numPendulums = parseInt(this.value);
-        resetPendulums();
-    });
-
-    // Function to reset pendulums
-    function resetPendulums() {
-        pendulums.length = 0;
+        // Initialize pendulums
+        const pendulums = [];
+         // baseLength = 23;
+        const timeOffsets = [];
         for (let i = 0; i < numPendulums; i++) {
             pendulums.push({
                 length: gravity * ((24/((2*Math.PI*(baseLength + i + 1)))*(24/(2*Math.PI*(baseLength + i + 1))))) * 1000,
@@ -103,8 +62,127 @@
                 angularVelocity: 0,
                 color: colors[i % colors.length]
             });
+            
+            timeOffsets.push(i * Math.PI / 60);
         }
-    }
-</script>
+
+        // Update pendulum positions
+        function updatePendulums() {
+            for (let i = 0; i < numPendulums; i++) {
+                const pendulum = pendulums[i];
+                
+                const angularAcceleration = (-gravity / pendulum.length) * Math.sin(pendulum.angle);
+                pendulum.angularVelocity += angularAcceleration;
+                pendulum.angularVelocity *= dampingFactor;
+                pendulum.angle += pendulum.angularVelocity;
+
+                const x = canvas.width / 2 + pendulum.length * Math.sin(pendulum.angle);
+                const y = 50 + pendulum.length * Math.cos(pendulum.angle);
+                
+                // Draw pendulum line
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 50);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = pendulum.color;
+                ctx.stroke();
+
+                // Draw pendulum circle
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 0, Math.PI * 2);
+                ctx.fillStyle = pendulum.color;
+                ctx.fill();
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updatePendulums();
+            setTimeout(animate, animationInterval); // Change to setTimeout for slower animation
+        }
+
+        // Set canvas size
+        canvas.width = window.innerWidth/4;
+        canvas.height = window.innerHeight;
+
+        // Start animation
+        animate();
+
+        // Event listener for number of pendulums input
+        document.getElementById('numPendulums').addEventListener('change', function() {
+            numPendulums = parseInt(this.value);
+            resetPendulums();
+        });
+        document.getElementById('baseLength').addEventListener('change', function() {
+            l = this.value;
+            baseLength = parseInt((Tmax/(Math.sqrt(l/gravity)*6.28))-2) + 1;
+
+            resetPendulums();
+        });
+
+        // Function to reset pendulums
+        function resetPendulums() {
+            pendulums.length = 0;
+            for (let i = 0; i < numPendulums; i++) {
+                pendulums.push({
+                    length: gravity * ((24/((2*Math.PI*(baseLength + i + 1)))*(24/(2*Math.PI*(baseLength + i + 1))))) * 1000,
+                    angle: Math.PI / 2,
+                    angularVelocity: 0,
+                    color: colors[i % colors.length]
+                });
+            }
+        }
+    </script>
+
+    <script>
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+
+        function updatePendulums2() {
+            for (let i = 0; i < numPendulums; i++) {
+                const pendulum = pendulums[i];
+                
+                const angularAcceleration = (-gravity / pendulum.length) * Math.sin(pendulum.angle);
+                pendulum.angularVelocity += angularAcceleration;
+                pendulum.angularVelocity *= dampingFactor;
+                pendulum.angle += pendulum.angularVelocity;
+
+                // const x = canvas.width / 2 + pendulum.length * Math.sin(pendulum.angle);
+                // const y = 50 + pendulum.length * Math.cos(pendulum.angle);
+
+                const x = 50 + i * 50; // Adjust the x position for side view
+                const y = (canvas2.height / 2 + pendulum.length * Math.cos(pendulum.angle) ); // Use cos for side view
+                        
+                // Draw pendulum line
+                ctx2.beginPath();
+                ctx2.moveTo(50 + i * 50, canvas.height / 2);
+                ctx2.lineTo(x, y);
+                ctx2.strokeStyle = pendulum.color;
+                ctx2.stroke();
+
+                // Draw pendulum circle
+                ctx2.beginPath();
+                ctx2.arc(x, y, 10, 0, Math.PI * 2);
+                ctx2.fillStyle = pendulum.color;
+                ctx2.fill();
+            }
+        }
+
+        // Animation loop
+        function animate2() {
+            ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+            updatePendulums2();
+            setTimeout(animate2, animationInterval); // Change to setTimeout for slower animation
+        }
+
+        // Set canvas2 size
+        canvas2.width = window.innerWidth/3;
+        canvas2.height = window.innerHeight;
+
+        // Start animation
+        animate2();
+
+
+    </script>
 </body>
 </html>
