@@ -22,7 +22,6 @@
 <body>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-openrouteservice"></script>
     <script>
         // Initialize the map
         var map = L.map('map').setView([33.8416, 132.7657], 10);
@@ -32,15 +31,22 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Add OpenRouteService tile layer
-        L.tileLayer('https://api.openrouteservice.org/mapsurfer/{z}/{x}/{y}.png?api_key=YOUR_ORS_API_KEY', {
-            attribution: '&copy; <a href="https://www.openrouteservice.org/copyright">OpenRouteService</a> contributors'
-        }).addTo(map);
-
-        // Add a marker for Ehime Prefecture
-        var marker = L.marker([33.8416, 132.7657]).addTo(map)
-            .bindPopup('Ehime Prefecture')
-            .openPopup();
+        // Load the JSON data
+        fetch('ehime_data.json')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(company => {
+                    var marker = L.marker([company.lat, company.lon]).addTo(map);
+                    var popupContent = `
+                        <b>${company.企業名}</b><br>
+                        ${company.事業内容}<br>
+                        住所: ${company.住所}<br>
+                        <a href="${company.HP}" target="_blank">${company.HP}</a>
+                    `;
+                    marker.bindPopup(popupContent);
+                });
+            })
+            .catch(error => console.error('Error loading the JSON data:', error));
     </script>
 </body>
 </html>
