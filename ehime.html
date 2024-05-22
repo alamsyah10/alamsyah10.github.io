@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ehime Prefecture Map</title>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 100%;  /* The height is 100% of the viewport height */
+            width: 100%;  /* The width is 100% of the viewport width */
+        }
+        /* Optional: Makes the sample page fill the window */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // Initialize and add the map
+        function initMap() {
+            // The location of Ehime Prefecture
+            var ehime = {lat: 33.8416, lng: 132.7657};
+            // The map, centered at Ehime Prefecture
+            var map = new google.maps.Map(
+                document.getElementById('map'), {
+                    zoom: 10,
+                    center: ehime
+                });
+            // The marker, positioned at Ehime Prefecture
+            var marker = new google.maps.Marker({
+                position: ehime,
+                map: map
+            });
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+    </script>
+</body>
+</html>
