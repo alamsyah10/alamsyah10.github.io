@@ -102,10 +102,13 @@
         }
 
         // Set canvas size
-        canvas.width = window.innerWidth/4;
-        canvas.height = window.innerHeight;
+        function setCanvasSize() {
+            canvas.width = document.querySelector('.col-md-6').offsetWidth;
+            canvas.height = window.innerHeight - 100; // Adjusted to maintain space at the bottom
+        }
 
         // Start animation
+        setCanvasSize();
         animate();
 
         // Event listener for number of pendulums input
@@ -176,10 +179,13 @@
         }
 
         // Set canvas2 size
-        canvas2.width = window.innerWidth/3;
-        canvas2.height = window.innerHeight;
+        function setCanvas2Size() {
+            canvas2.width = document.querySelector('.col-md-6').offsetWidth;
+            canvas2.height = window.innerHeight - 100; // Adjusted to maintain space at the bottom
+        }
 
         // Start animation
+        setCanvas2Size();
         animate2();
     </script>
 </body>
