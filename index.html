@@ -41,32 +41,28 @@
 
         // Parameters
         let numPendulums = parseInt(document.getElementById('numPendulums').value);
-        let l = document.getElementById('baseLength').value;
+        let base_length = document.getElementById('baseLength').value;
         const colors = ['#FF5733', '#C70039', '#900C3F', '#581845', '#8E44AD', '#3498DB', '#2ECC71', '#F1C40F', '#E67E22', '#7F8C8D'];
         const dampingFactor = 0.99; // Damping factor for friction
         const animationInterval = 60; // Animation interval in milliseconds
         const gravity = 9.8; // Acceleration due to gravity
         const Tmax = 24;
 
-        let baseLength = parseInt((Tmax/(Math.sqrt(l/gravity)*6.28))-2) + 1;
-        console.log(baseLength)
+        let k = parseInt((Tmax/(Math.sqrt(base_length/gravity)*2*Math.PI))-(1-1));
 
 
         // Initialize pendulums
         const pendulums = [];
-         // baseLength = 23;
-        const timeOffsets = [];
         for (let i = 0; i < numPendulums; i++) {
             pendulums.push({
-                length: gravity * ((24/((2*Math.PI*(baseLength + i + 1)))*(24/(2*Math.PI*(baseLength + i + 1))))) * 1000,
+                length: gravity * ((Tmax/((2*Math.PI*(k + i + 2)))*(Tmax/(2*Math.PI*(k + i + 2))))) * 1000,
                 angle: Math.PI / 2,
                 angularVelocity: 0,
                 color: colors[i % colors.length]
             });
-            
-            timeOffsets.push(i * Math.PI / 60);
         }
 
+        
         // Update pendulum positions
         function updatePendulums() {
             for (let i = 0; i < numPendulums; i++) {
