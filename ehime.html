@@ -37,10 +37,13 @@
             .then(data => {
                 data.forEach(company => {
                     var marker = L.marker([company.lat, company.lon]).addTo(map);
+                    console.log(company.原材料);
+                    var ingredients = company.原材料.join(', ');  // Join the array into a comma-separated string
                     var popupContent = `
                         <b>${company.企業名}</b><br>
                         ${company.事業内容}<br>
                         住所: ${company.住所}<br>
+                        原材料: ${ingredients}<br>
                         <a href="${company.HP}" target="_blank">${company.HP}</a>
                     `;
                     marker.bindPopup(popupContent);
