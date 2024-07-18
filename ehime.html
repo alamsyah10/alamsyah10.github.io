@@ -35,7 +35,7 @@
         }).addTo(map);
 
         // Load the JSON data
-        fetch('ehime_data.json')
+        fetch('combined.json')
             .then(response => response.json())
             .then(data => {
                 data.forEach(entry => {
@@ -57,9 +57,9 @@
                         `;
                     });
 
-                    // Add HP link
+                    // Add HP link (assuming it's part of providerLocation)
                     popupContent += `
-                        <br><a href="${entry.HP}" target="_blank">${entry.HP}</a>
+                        <br><a href="${providerLocation.HP}" target="_blank">${providerLocation.HP}</a>
                     `;
                     
                     marker.bindPopup(popupContent);
