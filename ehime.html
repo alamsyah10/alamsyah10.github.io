@@ -8,8 +8,8 @@
     <style>
         /* Set the size of the div element that contains the map */
         #map {
-            height: 100%;  /* The height is 100% of the viewport height */
-            width: 100%;  /* The width is 100% of the viewport width */
+            height: 100vh;  /* Full viewport height */
+            width: 100%;    /* Full viewport width */
         }
         /* Optional: Makes the sample page fill the window */
         html, body {
@@ -21,10 +21,13 @@
 </head>
 <body>
     <div id="map"></div>
+
+    <!-- Leaflet library -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <script>
         // Initialize the map
-        var map = L.map('map').setView([33.8416, 132.7657], 10);
+        var map = L.map('map').setView([33.82760428, 132.7097334], 13); // Centered at initial coordinates, zoom level 13
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -32,25 +35,37 @@
         }).addTo(map);
 
         // Load the JSON data
-        fetch('ehime_data.json')
+        fetch('combined.json')
             .then(response => response.json())
             .then(data => {
-                data.forEach(company => {
-                    var marker = L.marker([company.lat, company.lon]).addTo(map);
-                    console.log(company.原材料);
-                    var ingredients = company.原材料.join(', ');  // Join the array into a comma-separated string
+                data.forEach(entry => {
+                    var providerLocation = entry.providerLocation;
+                    var availableIngredients = entry.availableIngredient;
+
+                    // Add marker for provider location
+                    var marker = L.marker([providerLocation.latitude, providerLocation.longitude]).addTo(map);
                     var popupContent = `
-                        <b>${company.企業名}</b><br>
-                        ${company.事業内容}<br>
-                        住所: ${company.住所}<br>
-                        原材料: ${ingredients}<br>
-                        <a href="${company.HP}" target="_blank">${company.HP}</a>
+                        <b>${providerLocation.username}</b><br>
+                        住所: ${providerLocation.address}<br><br>
+                        <b>Available Ingredients:</b><br>
                     `;
+                    
+                    // Add available ingredients to popup content
+                    availableIngredients.forEach(ingredient => {
+                        popupContent += `
+                            ${ingredient.ingredientName}: ${ingredient.amount}<br>
+                        `;
+                    });
+
+                    // Add HP link
+                    popupContent += `
+                        <br><a href="${entry.HP}" target="_blank">${entry.HP}</a>
+                    `;
+                    
                     marker.bindPopup(popupContent);
                 });
             })
             .catch(error => console.error('Error loading the JSON data:', error));
-
     </script>
 </body>
 </html>
