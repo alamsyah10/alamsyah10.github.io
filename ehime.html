@@ -41,7 +41,8 @@
                 data.forEach(entry => {
                     var providerLocation = entry.providerLocation;
                     var availableIngredients = entry.availableIngredient;
-                    var HP = entry.HP;
+                    console.log(entry);
+                    var homepage = entry.HP;
 
                     // Add marker for provider location
                     var marker = L.marker([providerLocation.latitude, providerLocation.longitude]).addTo(map);
@@ -60,7 +61,7 @@
 
                     // Add HP link (assuming it's part of providerLocation)
                     popupContent += `
-                        <br><a href="${HP}" target="_blank">${HP}</a>
+                        <br><a href="${homepage}" target="_blank">${homepage}</a>
                     `;
                     
                     marker.bindPopup(popupContent);
